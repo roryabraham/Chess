@@ -1,0 +1,122 @@
+* {
+    text-align: center;
+}
+
+#chessboard{
+    width: 640px;
+    height: 640px;
+    margin: auto;
+    border: 20px solid DarkSlateGrey
+}
+
+.index {
+    font-size: 18px;
+    color: ghostwhite;
+    pointer-events: none;
+}
+
+.topHorizontalIndex, .bottomHorizontalIndex {
+    width: 680px;
+    position: relative;
+    left: -20px;
+}
+
+.topHorizontalIndex {
+    top: -20px;
+    margin-bottom: -22px;
+}
+
+.topHorizontalIndex span, .bottomHorizontalIndex span {
+    margin-left: 32px;
+    margin-right: 32px;
+}
+
+.leftVerticalIndex, .rightVerticalIndex {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 640px;
+    width: 20px;
+}
+
+.leftVerticalIndex {
+    float: left;
+    left: -20px;
+    margin-right: -20px;
+}
+
+.rightVerticalIndex {
+    float: right;
+    top: -660px;
+    right: -20px;
+    margin-left: -20px;
+}
+
+.leftVerticalIndex span, .rightVerticalIndex span {
+    margin-top: 29px;
+    margin-bottom: 29px;
+}
+
+.blackPawn {
+    padding-top: 10px;
+    margin-bottom: -10px;
+}
+
+.white {
+    float: left;
+    width: 80px;
+    height: 80px;
+    font-size: 50px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    background-color: mintcream;
+}
+
+.black {
+    float: left;
+    width: 80px;
+    height: 80px;
+    font-size: 50px;
+    display: table-cell;
+    text-align: center;
+    vertical-align: center;
+    background-color: grey;
+}
+
+.black:hover, .white:hover {
+    width: 76px;
+    height: 76px;
+    border: 2px inset black;
+}
+
+.selected:hover {
+    width: 80px;
+    height: 80px;
+    border: none;
+}
+
+.selected {
+    box-sizing: border-box;
+    background: linear-gradient(90deg, teal 50%, transparent 50%),
+                linear-gradient(90deg, teal 50%, transparent 50%),
+                linear-gradient(0deg, teal 50%, transparent 50%),
+                linear-gradient(0deg, teal 50%, transparent 50%);
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: 12px 2px, 12px 2px, 2px 12px, 2px 12px;
+    background-position: 0 0, 78px 0px, 78px 78px, 0px 78px;
+    animation: border-spin 4s infinite linear;
+}
+
+@keyframes border-spin {
+    0% {
+        background-position: 0px 0px, 156px 78px, 0px 156px, 78px 0px;
+    }
+    100% {
+        background-position: 156px 0px, 0px 78px, 0px 0px, 78px 156px;
+    }
+}
+
+/*div, span {
+    outline: 1px solid red !important;
+}*/
