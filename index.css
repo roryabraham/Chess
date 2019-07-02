@@ -6,7 +6,7 @@
     width: 640px;
     height: 640px;
     margin: auto;
-    border: 20px solid DarkSlateGrey
+    border: 20px solid DarkSlateGrey;
 }
 
 .index {
@@ -57,12 +57,12 @@
     margin-bottom: 29px;
 }
 
-.blackPawn {
+.blackTeam.pawn {
     padding-top: 10px;
     margin-bottom: -10px;
 }
 
-.white {
+.white, .black {
     float: left;
     width: 80px;
     height: 80px;
@@ -70,17 +70,13 @@
     display: table-cell;
     text-align: center;
     vertical-align: middle;
+}
+
+.white {
     background-color: mintcream;
 }
 
 .black {
-    float: left;
-    width: 80px;
-    height: 80px;
-    font-size: 50px;
-    display: table-cell;
-    text-align: center;
-    vertical-align: center;
     background-color: grey;
 }
 
@@ -104,7 +100,7 @@
                 linear-gradient(0deg, teal 50%, transparent 50%);
     background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
     background-size: 12px 2px, 12px 2px, 2px 12px, 2px 12px;
-    background-position: 0 0, 78px 0px, 78px 78px, 0px 78px;
+    background-position: 0px 0px, 78px 0px, 78px 78px, 0px 78px;
     animation: border-spin 4s infinite linear;
 }
 
@@ -117,6 +113,8 @@
     }
 }
 
-/*div, span {
+/*
+div, span {
     outline: 1px solid red !important;
-}*/
+}
+*/
