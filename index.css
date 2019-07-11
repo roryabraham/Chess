@@ -104,6 +104,18 @@
     animation: border-spin 4s infinite linear;
 }
 
+.validDestination {
+    background-color: rgba(255,215,0,0.55);
+    box-sizing: border-box;
+    border: 2px solid black;
+}
+
+.killDestination {
+    background-color: rgba(255, 0, 0, 0.5);
+    box-sizing: border-box;
+    border: 2px solid black;
+}
+
 @keyframes border-spin {
     0% {
         background-position: 0px 0px, 156px 78px, 0px 156px, 78px 0px;

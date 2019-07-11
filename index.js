@@ -76,6 +76,7 @@ function evaluatePotentialMoves(location, pieceType, isFirstMove=false) {
             for(const key in nextCol){
                 potentialDestinations.push(key + row);
             }
+            potentialDestinations.push(`H${row}`);
             break;
         case "knight":
             potentialDestinations.push(prevCol[prevCol[col]] + ((1*row)+1));
@@ -83,7 +84,7 @@ function evaluatePotentialMoves(location, pieceType, isFirstMove=false) {
             potentialDestinations.push(prevCol[col] + ((1*row)+2));
             potentialDestinations.push(prevCol[col] + (row-2));
             potentialDestinations.push(nextCol[nextCol[col]] + ((1*row)+1));
-            potentialDestinations.push((nextCol[nextCol[col]] + (row-1)));
+            potentialDestinations.push(nextCol[nextCol[col]] + (row-1));
             potentialDestinations.push(nextCol[col] + ((1*row)+2));
             potentialDestinations.push(nextCol[col] + (row-2));
             break;
@@ -127,6 +128,7 @@ function evaluatePotentialMoves(location, pieceType, isFirstMove=false) {
             for(const key in nextCol){
                 potentialDestinations.push(key + row);
             }
+            potentialDestinations.push(`H${row}`);
 
             // And like a bishop :)
 
@@ -179,7 +181,7 @@ function evaluatePotentialMoves(location, pieceType, isFirstMove=false) {
 
 function locationIsValid(location) {
     let col = location.charAt(0);
-    let row = location.charAt(1);
+    let row = location.substring(1, location.length);
 
     if(row > 8 || row < 1) {
         return false;
@@ -210,6 +212,8 @@ function pathIsOpen(src, dest) {
 
     // If this is a diagonal path
     if(srcCol !== destCol && srcRow !== destRow) {
+        console.log("diagonal path!!");
+
         // Determine direction to traverse
         if(srcCol < destCol) // left-to-right
         {
@@ -217,7 +221,7 @@ function pathIsOpen(src, dest) {
             {
                 currCol = nextCol[currCol];
                 for(currRow = --currRow; currRow > destRow; currRow--) {
-                    if($("#"+currCol+currRow).hasClass("containsPiece")) {
+                    if($(`#${currCol+currRow}`).hasClass("containsPiece")) {
                         return false;
                     }
                     currCol = nextCol[currCol];
@@ -227,7 +231,7 @@ function pathIsOpen(src, dest) {
             {
                 currCol = nextCol[currCol];
                 for(currRow = ++currRow; currRow < destRow; currRow++) {
-                    if($("#"+currCol+currRow).hasClass("containsPiece")) {
+                    if($(`#${currCol+currRow}`).hasClass("containsPiece")) {
                         return false;
                     }
                     currCol = nextCol[currCol];
@@ -240,7 +244,7 @@ function pathIsOpen(src, dest) {
             {
                 currCol = prevCol[currCol];
                 for(currRow = --currRow; currRow > destRow; currRow--) {
-                    if($("#"+currCol+currRow).hasClass("containsPiece")) {
+                    if($(`#${currCol+currRow}`).hasClass("containsPiece")) {
                         return false;
                     }
                     currCol = prevCol[currCol];
@@ -250,7 +254,7 @@ function pathIsOpen(src, dest) {
             {
                 currCol = prevCol[currCol];
                 for(currRow = ++currRow; currRow < destRow; currRow++) {
-                    if($("#"+currCol+currRow).hasClass("containsPiece")) {
+                    if($(`#${currCol+currRow}`).hasClass("containsPiece")) {
                         return false;
                     }
                     currCol = prevCol[currCol];
@@ -265,7 +269,7 @@ function pathIsOpen(src, dest) {
         if(srcRow < destRow) // bottom-to-top
         {
             for(currRow = ++currRow; currRow < destRow; currRow++) {
-                if($("#"+srcCol+currRow).hasClass("containsPiece")) {
+                if($(`#${srcCol + currRow}`).hasClass("containsPiece")) {
                     return false;
                 }
             }
@@ -273,7 +277,7 @@ function pathIsOpen(src, dest) {
         else // top-to-bottom
         {
             for(currRow = --currRow; currRow > destRow; currRow--) {
-                if($("#"+srcCol+currRow).hasClass("containsPiece")) {
+                if($(`#${srcCol + currRow}`).hasClass("containsPiece")) {
                     return false;
                 }
             }
@@ -285,7 +289,7 @@ function pathIsOpen(src, dest) {
         if(srcCol < destCol) // left-to-right
         {
             for(currCol = nextCol[currCol]; currCol < destCol; currCol = nextCol[currCol]) {
-                if($("#"+currCol+srcRow).hasClass("containsPiece")) {
+                if($(`#${ currCol + srcRow }`).hasClass("containsPiece")) {
                     return false;
                 }
             }
@@ -293,7 +297,7 @@ function pathIsOpen(src, dest) {
         else // right-to-left
         {
             for(currCol = prevCol[currCol]; currCol > destCol; currCol = prevCol[currCol]) {
-                if($("#"+currCol+srcRow).hasClass("containsPiece")) {
+                if($(`#${ currCol + srcRow }`).hasClass("containsPiece")) {
                     return false;
                 }
             }
@@ -303,29 +307,41 @@ function pathIsOpen(src, dest) {
     return true;
 }
 
-function evaluateValidMoves(location, pieceType, potentialMoves) {
-    // assume all moves are valid
-    let validMoves = potentialMoves;
+function evaluateValidMoves(location, isFirstMove=false) {
+
+    // find piece
+    let pieceAtLocation = $(`#${location} div`);
 
     // determine which team we are evaluating moves for
-    let team = $("#"+location).html().hasClass("blackTeam") ? "blackTeam" : "whiteTeam";
+    let team = $(pieceAtLocation).hasClass("blackTeam") ? "blackTeam" : "whiteTeam";
+
+    // determine piece type
+    let pieceType = pieceAtLocation[0].classList[1];
+
+    // assume all moves are valid (except those with falsy values)
+    let potentialMoves = evaluatePotentialMoves(location, pieceType, isFirstMove).filter(Boolean);
+    let validMoves = potentialMoves;
+
+    console.log(potentialMoves);
 
     for(let i=0; i < potentialMoves.length; i++) {
 
         // make sure location is on the board (should always be true)
         if(!locationIsValid(potentialMoves[i])) {
-            validMoves.remove(potentialMoves[i]);
+            delete validMoves[i];
             continue;
         }
 
         // find destination element
         let dest = potentialMoves[i];
-        let destElem = $("#"+dest);
+        let destElem = $(`#${dest}`);
 
         // If a destination has own team's piece, invalidate move
-        if(destElem.html().hasClass(team)) {
-            validMoves.remove(potentialMoves[i]);
-            continue;
+        if(destElem.hasClass("containsPiece")) {
+            if($(`#${dest} div`).hasClass(team)) {
+                delete validMoves[i];
+                continue;
+            }
         }
 
         // Pawns can't move backwards (direction depends on team)
@@ -334,13 +350,13 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
             let destRow = dest.charAt(1);
             if(team === "blackTeam") {
                 if(destRow > srcRow) {
-                    validMoves.remove(potentialMoves[i]);
+                    delete validMoves[i];
                     continue;
                 }
             }
             else {
                 if(destRow < srcRow) {
-                    validMoves.remove(potentialMoves[i]);
+                    delete validMoves[i];
                     continue;
                 }
             }
@@ -351,7 +367,7 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
             if(srcCol !== destCol) {
                 // if destination is empty, invalidate diagonal move
                 if(!destElem.hasClass("containsPiece")) {
-                    validMoves.remove(potentialMoves[i]);
+                    delete validMoves[i];
                     continue;
                 }
             }
@@ -359,7 +375,7 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
             else {
                 // if destination is nonempty, invalidate forward move
                 if(destElem.hasClass("containsPiece")) {
-                    validMoves.remove(potentialMoves[i]);
+                    delete validMoves[i];
                     continue;
                 }
             }
@@ -367,18 +383,22 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
 
         // If there is a piece blocking the path, invalidate move (except knights can jump)
         if(pieceType !== "knight") {
-            if(!pathIsOpen(potentialMoves[i])) {
-                validMoves.remove(potentialMoves[i]);
+            if(!pathIsOpen(location, potentialMoves[i])) {
+                delete validMoves[i];
                 continue;
             }
         }
     }
+
+    // return validMoves with any falsy elements removes
+    return validMoves.filter(Boolean);
 }
 
 /**
  * A utility method to switch on/off the "selected" state of a given square
  * @param location The location of the square
  */
+
 function toggleSelected(location) {
     let square = $(document.getElementById(location));
     square.toggleClass("selected");
@@ -386,32 +406,20 @@ function toggleSelected(location) {
 
 $(function(){
 
-/*    $(".containsPiece").click(function() {
-
-        let selectedSquares = document.getElementsByClassName("selected");
-        if(selectedSquares.length !== 0) {
-            for(let element in selectedSquares) {
-                toggleSelected(element.id);
-            }
-        }
-
-        toggleSelected(this.id);
-    });*/
-
     $("#chessboard").on("click",".containsPiece", function() {
 
         // toggle any currently selected square to unselected
         let selectedSquares = document.getElementsByClassName("selected");
         for(let i=0; i < selectedSquares.length; i++) {
-            toggleSelected(selectedSquares.item(i).id);
+            if(selectedSquares.item(i) !== this) {
+                toggleSelected(selectedSquares.item(i).id);
+            }
         }
 
         // and toggle the new selection to selected
         toggleSelected(this.id);
-    });
 
-    let arr = evaluatePotentialMoves("D5", "bishop");
-    for(let i=0; i < arr.length; i++) {
-        console.log(arr[i]);
-    }
+        // evaluate valid moves for this piece from this location
+        console.log(evaluateValidMoves(this.id));
+    });
 });
