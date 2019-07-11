@@ -40,15 +40,6 @@ function movePiece(initialPos, endPos) {
 }
 
 /**
- * A utility method to switch on/off the "selected" state of a given square
- * @param location The location of the square
- */
-function toggleSelected(location) {
-    let square = $("#" + location);
-    square.hasClass("selected") ? square.removeClass("selected") : square.addClass("selected");
-}
-
-/**
  * A method that exhaustively calculates all possible destinations a given piece can move to.
  * @param location The location of the piece
  * @param pieceType The type of chess piece (pawn, knight, rook, etc...)
@@ -321,6 +312,7 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
 
     for(let i=0; i < potentialMoves.length; i++) {
 
+        // make sure location is on the board (should always be true)
         if(!locationIsValid(potentialMoves[i])) {
             validMoves.remove(potentialMoves[i]);
             continue;
@@ -355,7 +347,7 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
 
             // Pawns also can't move diagonally unless it is an attack
             let srcCol = location.charAt(0);
-            let destCol = location.charAt(1);
+            let destCol = dest.charAt(0);
             if(srcCol !== destCol) {
                 // if destination is empty, invalidate diagonal move
                 if(!destElem.hasClass("containsPiece")) {
@@ -383,14 +375,43 @@ function evaluateValidMoves(location, pieceType, potentialMoves) {
     }
 }
 
+/**
+ * A utility method to switch on/off the "selected" state of a given square
+ * @param location The location of the square
+ */
+function toggleSelected(location) {
+    let square = $(document.getElementById(location));
+    square.toggleClass("selected");
+}
+
 $(function(){
-    $(".containsPiece").click(function() {
-        toggleSelected($(".selected").id);
+
+/*    $(".containsPiece").click(function() {
+
+        let selectedSquares = document.getElementsByClassName("selected");
+        if(selectedSquares.length !== 0) {
+            for(let element in selectedSquares) {
+                toggleSelected(element.id);
+            }
+        }
+
+        toggleSelected(this.id);
+    });*/
+
+    $("#chessboard").on("click",".containsPiece", function() {
+
+        // toggle any currently selected square to unselected
+        let selectedSquares = document.getElementsByClassName("selected");
+        for(let i=0; i < selectedSquares.length; i++) {
+            toggleSelected(selectedSquares.item(i).id);
+        }
+
+        // and toggle the new selection to selected
         toggleSelected(this.id);
     });
 
-    var arr = evaluatePotentialMoves("D5", "bishop");
-    for(var i=0; i < arr.length; i++) {
+    let arr = evaluatePotentialMoves("D5", "bishop");
+    for(let i=0; i < arr.length; i++) {
         console.log(arr[i]);
     }
 });
