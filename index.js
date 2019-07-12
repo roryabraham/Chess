@@ -179,6 +179,11 @@ function evaluatePotentialMoves(location, pieceType, isFirstMove=false) {
     return potentialDestinations;
 }
 
+/**
+ * A utility method to ensure that a given location is on the board...A bit redundant really
+ * @param location The location in COL_ROW syntax i.e: A4, E7, H1
+ * @returns {boolean} True if location is on the board
+ */
 function locationIsValid(location) {
     let col = location.charAt(0);
     let row = location.substring(1, location.length);
@@ -202,6 +207,12 @@ function locationIsValid(location) {
     }
 }
 
+/**
+ * A function that traces the path from a source to a destination and determines if there are any pieces in the way
+ * @param src location in COL_ROW syntax i.e: A4, E7, H1
+ * @param dest location in COL_ROW syntax i.e: A4, E7, H1
+ * @returns {boolean} True if there are no pieces lying in the path between src and dest
+ */
 function pathIsOpen(src, dest) {
     let srcCol = src.charAt(0);
     let srcRow = src.charAt(1);
@@ -306,6 +317,18 @@ function pathIsOpen(src, dest) {
     return true;
 }
 
+/**
+ * A high-level function that:
+ *      1) Evaluates all potential moves
+ *      2) Determines which of those moves are valid based on:
+ *          - team
+ *          - piece type
+ *          - move type (attack or simple move)
+ *          - path availability
+ * @param location The location of the piece to move
+ * @param isFirstMove An optional parameter to allow pawns to move two spaces on their first turn
+ * @returns {*[]} An array of valid destination locations in COL_ROW syntax i.e: [A4, E7, H1]
+ */
 function evaluateValidMoves(location, isFirstMove=false) {
 
     // find piece
@@ -320,8 +343,6 @@ function evaluateValidMoves(location, isFirstMove=false) {
     // assume all moves are valid (except those with falsy values)
     let potentialMoves = evaluatePotentialMoves(location, pieceType, isFirstMove).filter(Boolean);
     let validMoves = potentialMoves;
-
-    console.log(potentialMoves);
 
     for(let i=0; i < potentialMoves.length; i++) {
 
@@ -395,13 +416,53 @@ function evaluateValidMoves(location, isFirstMove=false) {
 
 /**
  * A utility method to switch on/off the "selected" state of a given square
- * @param location The location of the square
+ * @param location The location of the square in COL_ROW syntax i.e: A4, E7, H1
  */
-
 function toggleSelected(location) {
     let square = $(document.getElementById(location));
     square.toggleClass("selected");
 }
+
+/**
+ * A utility method to toggle the "validDestination" state of a given square
+ * @param location The location of the square in COL_ROW syntax i.e: A4, E7, H1
+ */
+function toggleValidDestination(location) {
+    let square = $(document.getElementById(location));
+    square.toggleClass("validDestination");
+}
+
+/**
+ * A utility method to toggle the "killDestination" state of a given square
+ * @param location The location of the square in COL_ROW syntax i.e: A4, E7, H1
+ */
+function toggleKillDestination(location) {
+    let square = $(document.getElementById(location));
+    square.toggleClass("killDestination");
+}
+
+/*async function clearSelections() {
+    // toggle any currently selected square to unselected
+    let selectedSquares = document.getElementsByClassName("selected");
+    for(let i=0; i < selectedSquares.length; i++) {
+        if(selectedSquares.item(i) !== this) {
+            toggleSelected(selectedSquares.item(i).id);
+        }
+    }
+
+    // toggle off any current destinations
+    let currValidDestinations = document.getElementsByClassName("validDestination");
+    console.log("valid destinations: ");
+    console.log(currValidDestinations);
+    for(let i=0; i < currValidDestinations.length; i++) {
+        console.log("toggling validDestination on square" + currValidDestinations.item(i).id);
+        toggleValidDestination(currValidDestinations.item(i).id);
+    }
+    let currKillDestinations = document.getElementsByClassName("killDestination");
+    for(let i=0; i < currKillDestinations.length; i++) {
+        toggleKillDestination(currKillDestinations.item(i).id);
+    }
+}*/
 
 $(function(){
 
@@ -409,16 +470,43 @@ $(function(){
 
         // toggle any currently selected square to unselected
         let selectedSquares = document.getElementsByClassName("selected");
-        for(let i=0; i < selectedSquares.length; i++) {
+        for(let i=0; i < selectedSquares.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
+        {
             if(selectedSquares.item(i) !== this) {
                 toggleSelected(selectedSquares.item(i).id);
             }
+        }
+
+        // toggle off any current destinations
+        let currValidDestinations = document.getElementsByClassName("validDestination");
+        for(let i=0; i < currValidDestinations.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
+        {
+            toggleValidDestination(currValidDestinations.item(i).id);
+        }
+        let currKillDestinations = document.getElementsByClassName("killDestination");
+        for(let i=0; i < currKillDestinations.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
+        {
+            toggleKillDestination(currKillDestinations.item(i).id);
         }
 
         // and toggle the new selection to selected
         toggleSelected(this.id);
 
         // evaluate valid moves for this piece from this location
-        console.log(evaluateValidMoves(this.id));
+        let validMoves = evaluateValidMoves(this.id);
+        for(let i=0; i < validMoves.length; i++) {
+            let dest = $(document.getElementById(validMoves[i]));
+
+            // if destination is killshot
+            if(dest.hasClass("containsPiece")) {
+                dest.addClass("killDestination");
+                dest.prepend("<div class=\"circle\" style=\"animation-delay: -3s\"></div>\n" +
+                             "<div class=\"circle\" style=\"animation-delay: -2s\"></div>\n" +
+                             "<div class=\"circle\" style=\"animation-delay: -1s\"></div>\n");
+            }
+            else {
+                dest.addClass("validDestination");
+            }
+        }
     });
 });

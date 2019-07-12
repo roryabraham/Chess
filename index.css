@@ -104,24 +104,72 @@
     animation: border-spin 4s infinite linear;
 }
 
-.validDestination {
-    background-color: rgba(255,215,0,0.55);
-    box-sizing: border-box;
-    border: 2px solid black;
-}
-
-.killDestination {
-    background-color: rgba(255, 0, 0, 0.5);
-    box-sizing: border-box;
-    border: 2px solid black;
-}
-
 @keyframes border-spin {
     0% {
         background-position: 0px 0px, 156px 78px, 0px 156px, 78px 0px;
     }
     100% {
         background-position: 156px 0px, 0px 78px, 0px 0px, 78px 156px;
+    }
+}
+
+.validDestination {
+    background: rgba(95,207,248, 0.75);
+    background-image: linear-gradient(to top right,
+                                      rgba(95,207,248, 0.75) 0%,
+                                      #a7d4f1 20%,
+                                      rgba(95,207,248, 0.75) 40%,
+                                      rgba(95,207,248, 0.75) 100%);
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    display: inline-block;
+    position: relative;
+
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: shimmer;
+    animation-timing-function: linear;
+}
+
+.killDestination {
+    z-index: -1;
+    background: rgba(255,220,55,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.circle {
+    z-index: 0;
+    border-radius: 50%;
+    background-color: rgba(211, 16, 10, 0.5);
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    opacity: 0;
+    animation: scaleIn 4s infinite cubic-bezier(.36, .11, .89, .32);
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(.5, .5);
+        opacity: .5;
+    }
+    to {
+        transform: scale(1.5, 1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -140px -140px;
+    }
+
+    100% {
+        background-position: 140px 140px;
     }
 }
 
