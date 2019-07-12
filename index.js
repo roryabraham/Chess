@@ -212,12 +212,11 @@ function pathIsOpen(src, dest) {
 
     // If this is a diagonal path
     if(srcCol !== destCol && srcRow !== destRow) {
-        console.log("diagonal path!!");
 
         // Determine direction to traverse
         if(srcCol < destCol) // left-to-right
         {
-            if(srcRow < destRow) // top-to-bottom
+            if(srcRow > destRow) // top-to-bottom
             {
                 currCol = nextCol[currCol];
                 for(currRow = --currRow; currRow > destRow; currRow--) {
@@ -240,7 +239,7 @@ function pathIsOpen(src, dest) {
         }
         else // right-to-left
         {
-            if(srcRow < destRow) // top-to-bottom
+            if(srcRow > destRow) // top-to-bottom
             {
                 currCol = prevCol[currCol];
                 for(currRow = --currRow; currRow > destRow; currRow--) {
