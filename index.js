@@ -39,6 +39,14 @@ function movePiece(initialPos, endPos) {
     parentSquare.removeClass("containsPiece");
 }
 
+function killPiece(initialPos, endPos) {
+    // Find target piece
+    let parentSquare = $(`#${initialPos}`);
+    let pieceToMove = parentSquare.html();
+
+
+}
+
 /**
  * A method that exhaustively calculates all possible destinations a given piece can move to.
  * @param location The location of the piece
@@ -441,10 +449,14 @@ function toggleKillDestination(location) {
     square.toggleClass("killDestination");
 }
 
-/*async function clearSelections() {
+/**
+ * A method to clear any current selections and destinations
+ */
+function clearSelection() {
     // toggle any currently selected square to unselected
     let selectedSquares = document.getElementsByClassName("selected");
-    for(let i=0; i < selectedSquares.length; i++) {
+    for(let i=0; i < selectedSquares.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
+    {
         if(selectedSquares.item(i) !== this) {
             toggleSelected(selectedSquares.item(i).id);
         }
@@ -452,44 +464,33 @@ function toggleKillDestination(location) {
 
     // toggle off any current destinations
     let currValidDestinations = document.getElementsByClassName("validDestination");
-    console.log("valid destinations: ");
-    console.log(currValidDestinations);
-    for(let i=0; i < currValidDestinations.length; i++) {
-        console.log("toggling validDestination on square" + currValidDestinations.item(i).id);
+    for(let i=0; i < currValidDestinations.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
+    {
         toggleValidDestination(currValidDestinations.item(i).id);
     }
     let currKillDestinations = document.getElementsByClassName("killDestination");
-    for(let i=0; i < currKillDestinations.length; i++) {
+    for(let i=0; i < currKillDestinations.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
+    {
         toggleKillDestination(currKillDestinations.item(i).id);
     }
-}*/
+
+    // remove and circle animations
+    let circles = document.getElementsByClassName("circle");
+    for(let i=0; i < circles.length; i) {
+        circles.item(i).remove();
+    }
+
+}
 
 $(function(){
 
-    $("#chessboard").on("click",".containsPiece", function() {
+    let chessboard = $("#chessboard");
 
-        // toggle any currently selected square to unselected
-        let selectedSquares = document.getElementsByClassName("selected");
-        for(let i=0; i < selectedSquares.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
-        {
-            if(selectedSquares.item(i) !== this) {
-                toggleSelected(selectedSquares.item(i).id);
-            }
-        }
+    chessboard.on("click",".containsPiece", function() {
+        // clear any current selections and/or destinations
+        clearSelection();
 
-        // toggle off any current destinations
-        let currValidDestinations = document.getElementsByClassName("validDestination");
-        for(let i=0; i < currValidDestinations.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
-        {
-            toggleValidDestination(currValidDestinations.item(i).id);
-        }
-        let currKillDestinations = document.getElementsByClassName("killDestination");
-        for(let i=0; i < currKillDestinations.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
-        {
-            toggleKillDestination(currKillDestinations.item(i).id);
-        }
-
-        // and toggle the new selection to selected
+        // Toggle the new selection to selected
         toggleSelected(this.id);
 
         // evaluate valid moves for this piece from this location
@@ -509,4 +510,15 @@ $(function(){
             }
         }
     });
+
+    chessboard.on("click", ".validDestination", function() {
+        let currSelected = document.getElementsByClassName("selected");
+        movePiece(currSelected.item(0).id, this.id);
+        clearSelection();
+    });
+
+    chessboard.on("click", ".killDestination", function() {
+        let currSelected = document.getElementsByClassName("selected");
+    });
+
 });

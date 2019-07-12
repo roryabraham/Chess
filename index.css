@@ -57,6 +57,10 @@
     margin-bottom: 29px;
 }
 
+.blackTeam, .whiteTeam {
+    text-shadow: 2px 2px #BBBBBB;
+}
+
 .blackTeam.pawn {
     padding-top: 10px;
     margin-bottom: -10px;
@@ -132,7 +136,13 @@
     animation-timing-function: linear;
 }
 
+.validDestination:hover {
+    cursor: pointer;
+}
+
 .killDestination {
+    border: 2px solid black;
+    box-sizing: border-box;
     z-index: -1;
     background: rgba(255,220,55,0.75);
     display: flex;
