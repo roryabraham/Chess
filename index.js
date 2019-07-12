@@ -1,4 +1,12 @@
-// First some convenient objects to help us navigate the board
+/*
+ *  File: index.js
+ *  Project: Web Chess (Cheddah)
+ *  Author: Rory Abraham
+ */
+
+const isBlackTurn = false;
+
+// Some convenient objects to help us navigate the board
 const nextCol = {
     'A': 'B',
     'B': 'C',
@@ -37,14 +45,6 @@ function movePiece(initialPos, endPos) {
     // Remove piece from initial position
     parentSquare.empty();
     parentSquare.removeClass("containsPiece");
-}
-
-function killPiece(initialPos, endPos) {
-    // Find target piece
-    let parentSquare = $(`#${initialPos}`);
-    let pieceToMove = parentSquare.html();
-
-
 }
 
 /**
@@ -457,9 +457,7 @@ function clearSelection() {
     let selectedSquares = document.getElementsByClassName("selected");
     for(let i=0; i < selectedSquares.length; i) // NOTE: do not increment counter because elements are removed from LIVE collection
     {
-        if(selectedSquares.item(i) !== this) {
-            toggleSelected(selectedSquares.item(i).id);
-        }
+        toggleSelected(selectedSquares.item(i).id);
     }
 
     // toggle off any current destinations
@@ -490,11 +488,18 @@ $(function(){
         // clear any current selections and/or destinations
         clearSelection();
 
+        // FIXME: unselecting a piece not working
         // Toggle the new selection to selected
-        toggleSelected(this.id);
+        console.log($(this).hasClass("selected"));
+        if(!$(this).hasClass("selected")) {
+            toggleSelected(this.id);
+        }
+
+        let piece = $(this.querySelector("div"));
+        let isPawnsFirstTurn = piece.hasClass("pawn") && piece.data().firstTurn;
 
         // evaluate valid moves for this piece from this location
-        let validMoves = evaluateValidMoves(this.id);
+        let validMoves = evaluateValidMoves(this.id, isPawnsFirstTurn);
         for(let i=0; i < validMoves.length; i++) {
             let dest = $(document.getElementById(validMoves[i]));
 
@@ -512,6 +517,7 @@ $(function(){
     });
 
     chessboard.on("click", ".validDestination", function() {
+        // TODO: set first turn to false for pawns
         let currSelected = document.getElementsByClassName("selected");
         movePiece(currSelected.item(0).id, this.id);
         clearSelection();
