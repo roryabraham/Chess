@@ -59,6 +59,34 @@ function movePiece(initialPos, endPos) {
     parentSquare.removeClass("containsPiece");
 }
 
+function attackPiece(initialPos, endPos) {
+    // Find attacking piece
+    let initialSquare = $(`#${initialPos}`);
+    let pieceToMove = $(initialSquare.html());
+
+    // Find victim piece and location
+    let destinationSquare = $(`#${endPos}`);
+
+    // TODO: move pieceToKill to appropriate boneyard
+    let pieceToKill = $(destinationSquare.html());
+
+    console.log(destinationSquare);
+
+    // Empty the destination
+    destinationSquare.empty();
+    destinationSquare.removeClass("containsPiece");
+
+    console.log(destinationSquare);
+
+    // Add the piece to the destination
+    destinationSquare.html(pieceToMove);
+    destinationSquare.addClass("containsPiece");
+
+    // Remove piece from initial position
+    initialSquare.empty();
+    initialSquare.removeClass("containsPiece");
+}
+
 /**
  * A method that exhaustively calculates all possible destinations a given piece can move to.
  * @param location The location of the piece
@@ -501,8 +529,6 @@ function startGame() {
 function endTurn() {
     // TODO: check for check/checkmate
     gameState.isBlackTurn = !gameState.isBlackTurn;
-    //$(document.getElementsByClassName("blackTeam")).parent().toggleClass("clickablePiece");
-    //$(document.getElementsByClassName("whiteTeam")).parent().toggleClass("clickablePiece");
     $(document.getElementsByClassName("blackTeam")).toggleClass("clickablePiece");
     $(document.getElementsByClassName("whiteTeam")).toggleClass("clickablePiece");
 }
@@ -548,14 +574,17 @@ $(function(){
     });
 
     chessboard.on("click", ".validDestination", function() {
-        // TODO: set first turn to false for pawns
         let currSelected = document.getElementsByClassName("selected");
         movePiece(currSelected.item(0).id, this.id);
         clearSelection();
+        endTurn();
     });
 
     chessboard.on("click", ".killDestination", function() {
         let currSelected = document.getElementsByClassName("selected");
+        attackPiece(currSelected.item(0).id, this.id);
+        clearSelection();
+        endTurn();
     });
 
 });

@@ -98,6 +98,10 @@
     cursor: default;
 }
 
+.clickablePiece {
+    z-index: 1;
+}
+
 .clickablePiece:hover {
     cursor: pointer;
 }
