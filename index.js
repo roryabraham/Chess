@@ -42,7 +42,12 @@ const prevCol = {
 function movePiece(initialPos, endPos) {
     // Find target piece
     let parentSquare = $("#" + initialPos);
-    let pieceToMove = parentSquare.html();
+    let pieceToMove = $(parentSquare.html());
+
+    // remove first-turn marker for pawns
+    if(pieceToMove.hasClass("pawn") && pieceToMove.data().firstturn) {
+        pieceToMove.data().firstturn = false;
+    }
 
     // Add piece info to destination
     let destination = $("#" + endPos);
@@ -508,23 +513,24 @@ $(function(){
 
     $("#startButton").click(startGame);
 
-    chessboard.on("click",".containsPiece .clickablePiece", function() {
+    chessboard.on("click",".clickablePiece", function() {
 
         // clear any current selections and/or destinations
         clearSelection();
 
+        let piece = $(this);
+        let location = piece.parent();
+
         // FIXME: unselecting a piece not working
         // Toggle the new selection to selected
-        console.log($(this).hasClass("selected"));
-        if(!$(this).hasClass("selected")) {
-            toggleSelected(this.id);
+        if(!location.hasClass("selected")) {
+            toggleSelected(location[0].id);
         }
 
-        let piece = $(this.querySelector("div"));
-        let isPawnsFirstTurn = piece.hasClass("pawn") && piece.data().firstTurn;
+        let isPawnsFirstTurn = piece.hasClass("pawn") && piece.data().firstturn;
 
         // evaluate valid moves for this piece from this location
-        let validMoves = evaluateValidMoves(this.id, isPawnsFirstTurn);
+        let validMoves = evaluateValidMoves(location[0].id, isPawnsFirstTurn);
         for(let i=0; i < validMoves.length; i++) {
             let dest = $(document.getElementById(validMoves[i]));
 
