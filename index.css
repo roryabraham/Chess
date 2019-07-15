@@ -2,11 +2,15 @@
     text-align: center;
 }
 
+.dialogs {
+    float: right;
+}
+
 #chessboard{
     width: 640px;
     height: 640px;
-    margin: auto;
     border: 20px solid DarkSlateGrey;
+    float: left;
 }
 
 .index {
@@ -88,6 +92,14 @@
     width: 76px;
     height: 76px;
     border: 2px inset black;
+}
+
+.containsPiece:hover {
+    cursor: default;
+}
+
+.clickablePiece:hover {
+    cursor: pointer;
 }
 
 .selected:hover {
@@ -183,8 +195,6 @@
     }
 }
 
-/*
-div, span {
+/*div, span {
     outline: 1px solid red !important;
-}
-*/
+}*/

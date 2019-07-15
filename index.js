@@ -4,7 +4,14 @@
  *  Author: Rory Abraham
  */
 
-const isBlackTurn = false;
+
+
+const gameState = {
+    start: true,
+    isBlackTurn: false,
+    check: false,
+    checkMate: false
+};
 
 // Some convenient objects to help us navigate the board
 const nextCol = {
@@ -480,11 +487,29 @@ function clearSelection() {
 
 }
 
+function startGame() {
+    //$(document.getElementsByClassName("whiteTeam")).parent().addClass("clickablePiece");
+    $(document.getElementsByClassName("whiteTeam")).addClass("clickablePiece");
+    gameState.start = false;
+}
+
+function endTurn() {
+    // TODO: check for check/checkmate
+    gameState.isBlackTurn = !gameState.isBlackTurn;
+    //$(document.getElementsByClassName("blackTeam")).parent().toggleClass("clickablePiece");
+    //$(document.getElementsByClassName("whiteTeam")).parent().toggleClass("clickablePiece");
+    $(document.getElementsByClassName("blackTeam")).toggleClass("clickablePiece");
+    $(document.getElementsByClassName("whiteTeam")).toggleClass("clickablePiece");
+}
+
 $(function(){
 
     let chessboard = $("#chessboard");
 
-    chessboard.on("click",".containsPiece", function() {
+    $("#startButton").click(startGame);
+
+    chessboard.on("click",".containsPiece .clickablePiece", function() {
+
         // clear any current selections and/or destinations
         clearSelection();
 
